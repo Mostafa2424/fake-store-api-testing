@@ -1,0 +1,417 @@
+{
+  "info": {
+    "_postman_id": "bed1d234-755f-4a42-a99d-d3bc1e614eb1",
+    "name": "api-fake -store",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33667484",
+    "_collection_link": "https://go.postman.co/collection/33667484-bed1d234-755f-4a42-a99d-d3bc1e614eb1?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "//verify response is correct\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n//verify there is an access token in the response\r\npm.test(\"Access token is present in the response\", function () {\r\n    pm.expect(pm.response.json().data.accessToken).to.not.be.null;\r\n})\r\n\r\n// save the token as enviroment variable\r\npm.test(\"Save access token as environment variable\", function () {\r\n    var jsonData = pm.response.json();\r\n    pm.environment.set(\"accessToken\", jsonData.data.accessToken);\r\n});\r\n   \r\n   \r\n"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"qa@demo.io\",\r\n  \"password\": \"Password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "current user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// verify the response status code is 200\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n// verify the response body contains the expected data.email\r\npm.test(\"Response body contains the expected email\", function () {\r\n    pm.expect(pm.response.json().data.email).to.eql(\"qa@demo.io\");\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register new user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "//verify response status code is 201\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n//verify response body has token\r\npm.test(\"Response body has token\", function () {\r\n    pm.expect(pm.response.json().data.accessToken).to.not.be.null;\r\n});\r\n\r\n//verify response body has user id  \r\npm.test(\"Response body has user id\", function () {\r\n    pm.expect(pm.response.json().data.id).to.not.be.null;\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"New User\",\r\n  \"email\": \"new.user@example.com\",\r\n  \"password\": \"Password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "item": [
+        {
+          "name": "get all products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "//verify response status code is 200\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n//verify response is json and header content-type is application /json  \r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r\n});\r\n\r\n//verify response have product data\r\npm.test(\"Response has product data\", function () {\r\n    pm.expect(pm.response.json().data).to.have.lengthOf.at.least(1);\r\n});\r\n\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get single product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "//verify response status code is 200\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n//verify the response body contains the correct product data and in stock \r\npm.test(\"Response body contains correct product data\", function () {\r\n    pm.expect(pm.response.json().data.id).to.eql(1);\r\n    pm.expect(pm.response.json().data.name).to.eql(\"Quantum SSD 1TB B\");\r\n    pm.expect(pm.response.json().data.stock).to.be.greaterThan(0);\r\n});\r\n\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get single product with wrong id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// verify response status code is 404\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\n// verify error code is NOT_FOUND\r\npm.test(\"Error code is NOT_FOUND\", function () {\r\n    pm.expect(pm.response.json().error.code).to.eql(\"NOT_FOUND\");\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/500",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create  Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test to check if the response status code is 201\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\n// Test to check if the response body is json format\r\npm.test(\"Response body is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\n// Test to check the header content-type is application/json\r\npm.test(\"Header content-type is application/json\", function () {\r\n    pm.response.to.have.header('Content-Type', 'application/json; charset=utf-8');\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"nokia Keyboard\",\r\n  \"price\": 129.99,\r\n  \"category\": \"Peripherals\",\r\n  \"stock\": 40\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create product with missing fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test the response status code is 422 \r\npm.test(\"Status code is 422\", function () {\r\n    pm.response.to.have.status(422); \r\n});\r\n\r\n// Test the response returns an error property\r\npm.test(\"Response body contains the error property\", function () {\r\n    pm.expect(pm.response.json()).to.have.property(\"error\");\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Nebula Keyboard\",\r\n    \"stock\": 44\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create product with missing stock field",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test response code is 422 \r\npm.test(\"Status code is 422\", function () { \r\n    pm.response.to.have.status(422); \r\n    }); \r\n\r\n//Test the response returns an error property\r\npm.test(\"Response contains error property\", function () {\r\n    pm.response.to.have.jsonBody('error');\r\n    }); \r\n    "
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"nokia Keyboard\",\r\n  \"price\": 129.99,\r\n  \"category\": \"Peripherals\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update  product details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test response status code 200\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n//Test response body is json format\r\npm.test(\"Response body is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\n//Test response data id is 1 and the product data is correct \r\npm.test(\"Product data is correct\", function () {\r\n    var responseData = pm.response.json().data; \r\n    pm.expect(responseData.id).to.eql(1);\r\n    pm.expect(responseData.name).to.eql(\"Nebula Keyboard\");\r\n    pm.expect(responseData.price).to.eql(200);\r\n    pm.expect(responseData.category).to.eql(\"Peripherals\");\r\n    pm.expect(responseData.stock).to.eql(100);\r\n})\r\n\r\n   \r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Nebula Keyboard\",\r\n  \"price\": 200,\r\n  \"category\": \"Peripherals\",\r\n  \"stock\": 100\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test response status code is 204\r\npm.test(\"Status code is 204\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\n//Test response body is empty\r\npm.test(\"Response body is empty\", function () {\r\n    pm.expect(pm.response.text()).to.be.empty;\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/products/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "products",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
