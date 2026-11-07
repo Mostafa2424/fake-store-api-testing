@@ -62,3 +62,7 @@ The collection includes:
 - Response assertions
 - Error-handling validation
 - Postman Collection Runner
+
+ ## Test Results
+
+![Postman test results](screenshots/postman-test-results.png)
