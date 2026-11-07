@@ -1,4 +1,4 @@
-# Fake Store API Testing Portfolio
+# Fake Store API Testing 
 
 This repository contains a Postman API test collection for the Fake Store API.
 It validates authentication and product-management workflows through positive,
